@@ -38,6 +38,12 @@ h1 span{background:linear-gradient(90deg,var(--gold),#fff,#ff9ebf);-webkit-backg
 .opt:active{transform:scale(.94)}
 .opt b{font-size:38px;font-weight:400}
 .opt small{font-weight:400;opacity:.8;font-size:12px}
+.splash{position:fixed;inset:0;z-index:60;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
+  background:linear-gradient(160deg,var(--bg1),var(--bg2) 55%,var(--bg3));transition:opacity .6s}
+.splash.hide{opacity:0;pointer-events:none}
+.splash .eye{font-size:90px}
+.splash .btn{animation:pulse 1.4s infinite}
+@keyframes pulse{50%{transform:scale(1.08)}}
 .musicbtn{position:fixed;top:calc(env(safe-area-inset-top) + 10px);right:14px;z-index:20;width:44px;height:44px;border-radius:50%;
   border:1px solid rgba(255,255,255,.3);background:var(--card);color:#fff;font-size:20px;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
 .foot{margin-top:auto;padding-top:20px;font-size:12px;opacity:.7;text-align:center}
@@ -102,6 +108,12 @@ h1 span{background:linear-gradient(90deg,var(--gold),#fff,#ff9ebf);-webkit-backg
 </style>
 </head>
 <body>
+<div class="splash" id="splash">
+  <div class="eye">🧿</div>
+  <h1>For <span>Ponne</span></h1>
+  <p class="sub">Something special is waiting…</p>
+  <button class="btn" id="start">Tap to open 🎁</button>
+</div>
 <div class="stars" id="stars"></div>
 <canvas id="confetti"></canvas>
 <button class="musicbtn" id="music" aria-label="Play birthday tune">🎵</button>
@@ -338,6 +350,9 @@ function tone(f,t,d){const o=ac.createOscillator(),g=ac.createGain();o.type='tri
 function playSong(){ac=ac||new (window.AudioContext||window.webkitAudioContext)();ac.resume();
   let t=ac.currentTime+.1;const beat=.42;for(const [n,b] of song){tone(N[n],t,b*beat*.95);t+=b*beat}
   playing=true;$('#music').textContent='⏸️';timers.push(setTimeout(()=>{playing=false;$('#music').textContent='🎵';confetti(200)},(t-ac.currentTime)*1000))}
+/* Browsers only allow sound after a tap, so the splash screen starts the music */
+$('#start').onclick=()=>{$('#splash').classList.add('hide');setTimeout(()=>$('#splash').remove(),700);
+  try{playSong()}catch(e){};confetti(200)};
 $('#music').onclick=()=>{if(playing){ac.close();ac=null;playing=false;timers.forEach(clearTimeout);$('#music').textContent='🎵'}else playSong()};
 </script>
 </body>
